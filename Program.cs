@@ -14,10 +14,10 @@ public class Program
     }
     static void registrarpedido()
     {
-        Console.WriteLine("--- REGISTRO DE NUEVO ENVÍO ---");
+        Console.WriteLine("--- REGISTRO DE NUEVO ENVIO ---");   
         if (cantidadpedidos >= 100)
         {
-            Console.WriteLine("Error: Se alcanzó el límite máximo de 100 pedidos.");
+            Console.WriteLine("error: Se alcanzo el limite maximo de 100 pedidos.");
             return;
         }
         Console.Write("Nombre del cliente: ");
@@ -28,15 +28,19 @@ public class Program
         string opcMetodo = Console.ReadLine();
         if (opcMetodo == "1")
         {
-            metodos[cantidadpedidos] = "Agencia";
+            metodos[cantidadpedidos] = "agencia";
         }
         else
         {
-            metodos[cantidadpedidos] = "Motorizado";
+            metodos[cantidadpedidos] = "motorizado";
         }
         Console.Write("Dirección: ");
         direcciones[cantidadpedidos] = Console.ReadLine();
-        Console.Write("Fecha de envío (DD-MM-AAAA): ");
+        Console.Write("Fecha de envío DD-MM-AAAA: ");
         fechas[cantidadpedidos] = Console.ReadLine();
+        codigos[cantidadpedidos] = "ENV" + (cantidadpedidos + 1).ToString("D3");
+        estados[cantidadpedidos] = "Registrado";
+        Console.WriteLine($"Pedido registrado CÓDIGO UNICO: {codigos[cantidadpedidos]}");
+        cantidadpedidos++;
     }
 }
