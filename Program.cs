@@ -1,17 +1,15 @@
-﻿using System;				
-public class Program
+﻿public class Program
 {
-    // ARREGLOS
     static string[] codigos = new string[100];
     static string[] nombres = new string[100];
-    static string[] celulares = new string[100];
-    static string[] metodos = new string[100];
-    static string[] direcciones = new string[100];
-    static string[] fechas = new string[100];
-    static string[] estados = new string[100];
-    
-	public static void Main()
-	{
-
-	}
+    static int cantidadPedidos = 0;
+    static void RegistrarPedido()
+    {
+        Console.WriteLine("--- REGISTRO DE NUEVO ENVÍO ---");
+        if (cantidadPedidos >= 100)
+        {
+            Console.WriteLine("Error: Se alcanzó el límite máximo de 100 pedidos.");
+            return;
+        }
+    }
 }
