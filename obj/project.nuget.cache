@@ -1,8 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "rPt8dr8Cazs=",
+  "dgSpecHash": "06XHMnOqIfQ=",
   "success": true,
-  "projectFilePath": "C:\\Users\\Admin\\Desktop\\Test_casa\\Chema tienda\\ProyectoDeDesafio\\mesaDePartes.csproj",
-  "expectedPackageFiles": [],
+  "projectFilePath": "C:\\Users\\PC-01\\ProyectoDeDesafio\\mesaDePartes.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\PC-01\\.nuget\\packages\\microsoft.netcore.app.ref\\9.0.19\\microsoft.netcore.app.ref.9.0.19.nupkg.sha512",
+    "C:\\Users\\PC-01\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\9.0.19\\microsoft.windowsdesktop.app.ref.9.0.19.nupkg.sha512",
+    "C:\\Users\\PC-01\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\9.0.19\\microsoft.aspnetcore.app.ref.9.0.19.nupkg.sha512",
+    "C:\\Users\\PC-01\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\9.0.19\\microsoft.netcore.app.host.win-x64.9.0.19.nupkg.sha512"
+  ],
   "logs": []
 }
