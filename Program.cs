@@ -43,4 +43,29 @@ public class Program
         Console.WriteLine($"Pedido registrado CÓDIGO UNICO: {codigos[cantidadpedidos]}");
         cantidadpedidos++;
     }
+
+    //cambios de Daniel Gutiérrez - creación de la función para buscar por código
+    static void BuscarPorCodigo()
+    {
+        Console.WriteLine("--- BUSCAR POR CÓDIGO ---");
+        Console.Write("Ingrese el código: ");
+        string codigoBuscado = Console.ReadLine()?.Trim() ?? "";
+        bool encontrado = false;
+
+        for (int i = 0; i < cantidadpedidos; i++)
+        {
+            if (string.Equals(codigos[i], codigoBuscado, StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(codigos[i], "ENV-" + codigoBuscado.PadLeft(3, '0'), StringComparison.OrdinalIgnoreCase))
+            {
+                Console.WriteLine("\n--- RESUMEN ---");
+                Console.WriteLine($"Código: {codigos[i]}");
+                Console.WriteLine($"Cliente: {nombres[i]} | Celular: {celulares[i]}");
+                Console.WriteLine($"Método: {metodos[i]} | Dirección: {direcciones[i]}");
+                Console.WriteLine($"Fecha: {fechas[i]} | ESTADO: {estados[i]}");
+                encontrado = true;
+                break;
+            }
+        }
+        if (!encontrado) Console.WriteLine("Código no encontrado.");
+    }
 }
