@@ -9,9 +9,53 @@ public class Program
     static string[] fechas = new string[100];
     static string[] estados = new string[100];
     static int cantidadpedidos = 0;
+
+    #region Metodo Principal
+    //cambios de Christopher Agip - creación de la función para buscar por código
     public static void Main()
     {
+        bool ejecutando = true;
+        while (ejecutando)
+        {
+            Console.WriteLine("\n==================================");
+            Console.WriteLine("   SISTEMA DE GESTIÓN DE ENVÍOS   ");
+            Console.WriteLine("==================================");
+            Console.WriteLine("1. Registrar nuevo envío");
+            Console.WriteLine("2. Listar pedidos por estado");
+            Console.WriteLine("3. Listar pedidos por método");
+            Console.WriteLine("4. Buscar pedido por código");
+            Console.WriteLine("5. Salir");
+            Console.Write("Seleccione una opción (1-5): ");
+
+            string? opcion = Console.ReadLine();
+            Console.WriteLine();
+
+            switch (opcion)
+            {
+                case "1":
+                    registrarpedido();
+                    break;
+                case "2":
+                    ListarPorEstado();
+                    break;
+                case "3":
+                    ListarPorMetodo();
+                    break;
+                case "4":
+                    BuscarPorCodigo();
+                    break;
+                case "5":
+                    Console.WriteLine("Saliendo del sistema...");
+                    ejecutando = false;
+                    break;
+                default:
+                    Console.WriteLine("Opción no válida. Intente nuevamente.");
+                    break;
+            }
+        }
     }
+    #endregion
+
     static void registrarpedido()
     {
         Console.WriteLine("--- REGISTRO DE NUEVO ENVIO ---");   
@@ -28,11 +72,11 @@ public class Program
         string opcMetodo = Console.ReadLine();
         if (opcMetodo == "1")
         {
-            metodos[cantidadpedidos] = "agencia";
+            metodos[cantidadpedidos] = "Agencia";
         }
         else
         {
-            metodos[cantidadpedidos] = "motorizado";
+            metodos[cantidadpedidos] = "Motorizado";
         }
         Console.Write("Dirección: ");
         direcciones[cantidadpedidos] = Console.ReadLine();
