@@ -1,0 +1,34 @@
+## Visual Studio / .NET gitignore
+
+# Carpetas de compilación (Binarios y objetos)
+[Bb]in/
+[Oo]bj/
+**/[Bb]in/
+**/[Oo]bj/
+
+# Carpetas y archivos temporales de Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Archivos de configuración de usuario y caché
+*.userprefs
+*.pidb
+*.booproj
+
+# Archivos de depuración y crash dumps
+*.pdb
+*.ilk
+*.aps
+*.log
+
+# Entornos de desarrollo adicionales
+.vscode/
+.idea/
+
+# Archivos de sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
