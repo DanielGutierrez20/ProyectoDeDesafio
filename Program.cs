@@ -1,4 +1,4 @@
-﻿using System;             
+using System;             
 public class Program
 {
     static string[] codigos = new string[100];
@@ -42,6 +42,54 @@ public class Program
         estados[cantidadpedidos] = "Registrado";
         Console.WriteLine($"Pedido registrado CÓDIGO UNICO: {codigos[cantidadpedidos]}");
         cantidadpedidos++;
+    }
+
+    static void ListarPorEstado()
+    {
+        Console.WriteLine("--- LISTADO POR ESTADO ---");
+        string[] estadosPosibles = { "Registrado", "Enviado", "Entregado", "Recogido" };
+
+        for (int e = 0; e < estadosPosibles.Length; e++)
+        {
+            bool hayRegistros = false;
+            for (int i = 0; i < cantidadpedidos; i++)
+            {
+                if (estados[i] == estadosPosibles[e])
+                {
+                    if (!hayRegistros)
+                    {
+                        Console.WriteLine($"\n>> ESTADO: {estadosPosibles[e].ToUpper()} <<");
+                        hayRegistros = true;
+                    }
+                    Console.WriteLine($"   {fechas[i]} - {codigos[i]} - {nombres[i]} ({metodos[i]})");
+                }
+            }
+        }
+    }
+
+    //cambios de Christopher Agip - creación de la función listado por metodo de envio
+
+    static void ListarPorMetodo()
+    {
+        Console.WriteLine("--- LISTADO POR MÉTODO ---");
+        string[] metodosPosibles = { "Agencia", "Motorizado" };
+
+        for (int m = 0; m < metodosPosibles.Length; m++)
+        {
+            bool hayRegistros = false;
+            for (int i = 0; i < cantidadpedidos; i++)
+            {
+                if (metodos[i] == metodosPosibles[m])
+                {
+                    if (!hayRegistros)
+                    {
+                        Console.WriteLine($"\n>> MÉTODO: {metodosPosibles[m].ToUpper()} <<");
+                        hayRegistros = true;
+                    }
+                    Console.WriteLine($"   {fechas[i]} - {codigos[i]} - {nombres[i]} - Estado: {estados[i]}");
+                }
+            }
+        }
     }
 
     //cambios de Daniel Gutiérrez - creación de la función para buscar por código
