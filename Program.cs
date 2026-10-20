@@ -17,6 +17,7 @@ public class Program
     //cambios de Christopher Agip - creación de la función para buscar por código
     public static void Main()
     {
+        CargarDatos(); //Carga los pedidos guardados al arrancar
         bool ejecutando = true;
         while (ejecutando)
         {
@@ -48,7 +49,8 @@ public class Program
                     BuscarPorCodigo();
                     break;
                 case "5":
-                    Console.WriteLine("Saliendo del sistema...");
+                    GuardarDatos();//Guarda los pedidos registrados
+                    Console.WriteLine("Datos guardados con éxito. Saliendo del programa...");
                     ejecutando = false;
                     break;
                 default:
