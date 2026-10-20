@@ -1,6 +1,9 @@
-using System;             
+using System; 
+using System.IO;            
 public class Program
 {
+    //Donde se guardar la informacion de los pedidos: Josemaria Roque
+    static string rutaArchivo = "pedidos.txt";
     static string[] codigos = new string[100];
     static string[] nombres = new string[100];
     static string[] celulares = new string[100];
@@ -14,6 +17,7 @@ public class Program
     //cambios de Christopher Agip - creación de la función para buscar por código
     public static void Main()
     {
+        CargarDatos(); //Carga los pedidos guardados al arrancar
         bool ejecutando = true;
         while (ejecutando)
         {
@@ -45,7 +49,8 @@ public class Program
                     BuscarPorCodigo();
                     break;
                 case "5":
-                    Console.WriteLine("Saliendo del sistema...");
+                    GuardarDatos();//Guarda los pedidos registrados
+                    Console.WriteLine("Datos guardados con éxito. Saliendo del programa...");
                     ejecutando = false;
                     break;
                 default:
@@ -160,4 +165,47 @@ public class Program
         }
         if (!encontrado) Console.WriteLine("Código no encontrado.");
     }
+
+    //Metodos de percistencia: Guardar y Cargar  : Josemaria Roque
+    static void GuardarDatos()
+{
+    try
+    {
+        using (StreamWriter sw = new StreamWriter(rutaArchivo))
+        {
+            for (int i = 0; i < cantidadpedidos; i++)
+            {
+                sw.WriteLine($"{codigos[i]}|{nombres[i]}|{celulares[i]}|{metodos[i]}|{direcciones[i]}|{fechas[i]}|{estados[i]}");
+            }
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("Error al guardar: " + ex.Message);
+    }
 }
+
+static void CargarDatos()
+{
+    if (File.Exists(rutaArchivo))
+    {
+        string[] lineas = File.ReadAllLines(rutaArchivo);
+        foreach (string linea in lineas)
+        {
+            string[] datos = linea.Split('|');
+            if (datos.Length == 7 && cantidadpedidos < 100)
+            {
+                codigos[cantidadpedidos] = datos[0];
+                nombres[cantidadpedidos] = datos[1];
+                celulares[cantidadpedidos] = datos[2];
+                metodos[cantidadpedidos] = datos[3];
+                direcciones[cantidadpedidos] = datos[4];
+                fechas[cantidadpedidos] = datos[5];
+                estados[cantidadpedidos] = datos[6];
+                cantidadpedidos++;
+            }
+        }
+    }
+}
+}
+
