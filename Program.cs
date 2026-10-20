@@ -1,6 +1,9 @@
-using System;             
+using System; 
+using System.IO;            
 public class Program
 {
+    //Donde se guardar la informacion de los pedidos: Josemaria Roque
+    static string rutaArchivo = "pedidos.txt";
     static string[] codigos = new string[100];
     static string[] nombres = new string[100];
     static string[] celulares = new string[100];
@@ -160,4 +163,24 @@ public class Program
         }
         if (!encontrado) Console.WriteLine("Código no encontrado.");
     }
+
+    //Metodos de percistencia: Guardar y Cargar  : Josemaria Roque
+    static void GuardarDatos()
+{
+    try
+    {
+        using (StreamWriter sw = new StreamWriter(rutaArchivo))
+        {
+            for (int i = 0; i < cantidadpedidos; i++)
+            {
+                sw.WriteLine($"{codigos[i]}|{nombres[i]}|{celulares[i]}|{metodos[i]}|{direcciones[i]}|{fechas[i]}|{estados[i]}");
+            }
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("Error al guardar: " + ex.Message);
+    }
 }
+}
+
