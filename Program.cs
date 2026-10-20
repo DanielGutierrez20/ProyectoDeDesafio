@@ -182,5 +182,28 @@ public class Program
         Console.WriteLine("Error al guardar: " + ex.Message);
     }
 }
+
+static void CargarDatos()
+{
+    if (File.Exists(rutaArchivo))
+    {
+        string[] lineas = File.ReadAllLines(rutaArchivo);
+        foreach (string linea in lineas)
+        {
+            string[] datos = linea.Split('|');
+            if (datos.Length == 7 && cantidadpedidos < 100)
+            {
+                codigos[cantidadpedidos] = datos[0];
+                nombres[cantidadpedidos] = datos[1];
+                celulares[cantidadpedidos] = datos[2];
+                metodos[cantidadpedidos] = datos[3];
+                direcciones[cantidadpedidos] = datos[4];
+                fechas[cantidadpedidos] = datos[5];
+                estados[cantidadpedidos] = datos[6];
+                cantidadpedidos++;
+            }
+        }
+    }
+}
 }
 
