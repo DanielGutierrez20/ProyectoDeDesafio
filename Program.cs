@@ -20,8 +20,22 @@ public class Program
         }
         return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "datos");
     }
+    static void AsegurarArchivos()
+    {
+        try
+        {
+            if (!Directory.Exists(carpetaDatos)) Directory.CreateDirectory(carpetaDatos);
+            if (!File.Exists(rutaUsuarios)) File.Create(rutaUsuarios).Close();
+            if (!File.Exists(rutaArchivo)) File.Create(rutaArchivo).Close();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Advertencia al verificar archivos: " + ex.Message);
+        }
+    }
     public static void Main()
     {
-        Console.WriteLine("Ruta de carpeta datos configurada correctamente");
+        AsegurarArchivos();
+        Console.WriteLine("Sistema listo para integrar los módulos del equipo");
     }
 }
