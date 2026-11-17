@@ -2,8 +2,10 @@
 using System.IO;            
 public class Program
 {
-    //Donde se guardar la informacion de los pedidos: Josemaria Roque
-    static string rutaArchivo = "pedidos.txt";
+    //Commit 1: Rutas dinamicas
+    static string carpetaDatos = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "datos");
+    static string rutaArchivo = Path.Combine(carpetaDatos, "pedidos.txt");
+    static string rutaUsuarios = Path.Combine(carpetaDatos, "usuarios.txt");
     static string[] codigos = new string[100];
     static string[] nombres = new string[100];
     static string[] celulares = new string[100];
