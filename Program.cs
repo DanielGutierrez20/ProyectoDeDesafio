@@ -31,11 +31,26 @@ public class Program
         }
         return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "datos");
     }
+    // Commit 3: crear carpeta y archivos si fueron borrados
+    static void AsegurarArchivos()
+    {
+        try
+        {
+            if (!Directory.Exists(carpetaDatos)) Directory.CreateDirectory(carpetaDatos);
+            if (!File.Exists(rutaUsuarios)) File.Create(rutaUsuarios).Close();
+            if (!File.Exists(rutaArchivo)) File.Create(rutaArchivo).Close();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Advertencia al verificar archivos: " + ex.Message);
+        }
+    }
 
     #region Metodo Principal
     //cambios de Christopher Agip - creación de la función para buscar por código
     public static void Main()
     {
+        AsegurarArchivos();
         CargarDatos(); //Carga los pedidos guardados al arrancar
         bool ejecutando = true;
         while (ejecutando)
