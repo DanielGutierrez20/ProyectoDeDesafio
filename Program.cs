@@ -3,7 +3,7 @@ using System.IO;
 public class Program
 {
     //Commit 1: Rutas dinamicas
-    static string carpetaDatos = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "datos");
+    static string carpetaDatos = ObtenerRutaCarpetaDatos();
     static string rutaArchivo = Path.Combine(carpetaDatos, "pedidos.txt");
     static string rutaUsuarios = Path.Combine(carpetaDatos, "usuarios.txt");
     static string[] codigos = new string[100];
@@ -14,6 +14,23 @@ public class Program
     static string[] fechas = new string[100];
     static string[] estados = new string[100];
     static int cantidadpedidos = 0;
+
+    // Commit 2: ubicar la raíz del proyecto
+    static string ObtenerRutaCarpetaDatos()
+    {
+        string dir = AppDomain.CurrentDomain.BaseDirectory;
+        DirectoryInfo? info = new DirectoryInfo(dir);
+        while (info != null)
+        {
+            if (File.Exists(Path.Combine(info.FullName, "mesaDePartes.csproj")) ||
+                Directory.GetFiles(info.FullName, "*.sln").Length > 0)
+            {
+                return Path.Combine(info.FullName, "datos");
+            }
+            info = info.Parent;
+        }
+        return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "datos");
+    }
 
     #region Metodo Principal
     //cambios de Christopher Agip - creación de la función para buscar por código
