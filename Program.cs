@@ -93,6 +93,17 @@ public class Program
         cantidadpedidos++;
     }
 
+    //Metodo para validar que el Dni tenga 8 caracteres: Josemaria Roque
+    static bool EsDniValido(string dni)
+    {
+        if (dni.Length != 8) return false;
+        foreach (char c in dni)
+        {
+            if (!char.IsDigit(c)) return false;
+        }
+        return true;
+    }
+
     static void ListarPorEstado()
     {
         Console.WriteLine("--- LISTADO POR ESTADO ---");
