@@ -2,8 +2,10 @@
 using System.IO;            
 public class Program
 {
-    //Donde se guardar la informacion de los pedidos: Josemaria Roque
-    static string rutaArchivo = "pedidos.txt";
+    //Commit 1: Rutas dinamicas
+    static string carpetaDatos = ObtenerRutaCarpetaDatos();
+    static string rutaArchivo = Path.Combine(carpetaDatos, "pedidos.txt");
+    static string rutaUsuarios = Path.Combine(carpetaDatos, "usuarios.txt");
     static string[] codigos = new string[100];
     static string[] nombres = new string[100];
     static string[] celulares = new string[100];
@@ -13,10 +15,42 @@ public class Program
     static string[] estados = new string[100];
     static int cantidadpedidos = 0;
 
+    // Commit 2: ubicar la raíz del proyecto
+    static string ObtenerRutaCarpetaDatos()
+    {
+        string dir = AppDomain.CurrentDomain.BaseDirectory;
+        DirectoryInfo? info = new DirectoryInfo(dir);
+        while (info != null)
+        {
+            if (File.Exists(Path.Combine(info.FullName, "mesaDePartes.csproj")) ||
+                Directory.GetFiles(info.FullName, "*.sln").Length > 0)
+            {
+                return Path.Combine(info.FullName, "datos");
+            }
+            info = info.Parent;
+        }
+        return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "datos");
+    }
+    // Commit 3: crear carpeta y archivos si fueron borrados
+    static void AsegurarArchivos()
+    {
+        try
+        {
+            if (!Directory.Exists(carpetaDatos)) Directory.CreateDirectory(carpetaDatos);
+            if (!File.Exists(rutaUsuarios)) File.Create(rutaUsuarios).Close();
+            if (!File.Exists(rutaArchivo)) File.Create(rutaArchivo).Close();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Advertencia al verificar archivos: " + ex.Message);
+        }
+    }
+
     #region Metodo Principal
     //cambios de Christopher Agip - creación de la función para buscar por código
     public static void Main()
     {
+        AsegurarArchivos();
         CargarDatos(); //Carga los pedidos guardados al arrancar
         bool ejecutando = true;
         while (ejecutando)
