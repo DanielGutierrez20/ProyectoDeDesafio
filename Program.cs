@@ -127,6 +127,49 @@ public class Program
         cantidadpedidos++;
     }
 
+    //Metodo para validar que el Dni tenga 8 caracteres: Josemaria Roque
+    static bool EsDniValido(string dni)
+    {
+        if (dni.Length != 8) return false;
+        foreach (char c in dni)
+        {
+            if (!char.IsDigit(c)) return false;
+        }
+        return true;
+    }
+
+    //Metodo que permite buscar validar si ya existe el dni ingresado en el archivo txt 
+    static string? BuscarUsuarioPorDni(string dni)
+    {
+        if (!File.Exists(rutaUsuarios)) return null;
+
+        string[] lineas = File.ReadAllLines(rutaUsuarios);
+        foreach (string linea in lineas)
+        {
+            if (string.IsNullOrWhiteSpace(linea)) continue;
+            string[] datos = linea.Split('|');
+            if (datos.Length >= 2 && datos[0].Trim().Equals(dni.Trim(), StringComparison.OrdinalIgnoreCase))
+            {
+                return datos[1].Trim();
+            }
+        }
+        return null;
+    }
+
+    //Metodo que verifica si existe la carpeta donde se guardaran los txt en caso no exista la crea
+    //Valida si existe el Usuarios.txt sino existe la crea
+    //Si existe coloca el cursor de escritura al final para no sobrescribir ni eliminar usuarios guardados
+    static void RegistrarUsuario(string dni, string nombre)
+    {
+        if (!Directory.Exists(carpetaDatos))
+        {
+            Directory.CreateDirectory(carpetaDatos);
+        }
+        using (StreamWriter sw = File.AppendText(rutaUsuarios))
+        {
+            sw.WriteLine($"{dni.Trim()}|{nombre.Trim()}");
+        }
+    }
     static void ListarPorEstado()
     {
         Console.WriteLine("--- LISTADO POR ESTADO ---");
