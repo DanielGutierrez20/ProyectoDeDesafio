@@ -1,4 +1,4 @@
-﻿using System; 
+using System; 
 using System.IO;            
 public class Program
 {
@@ -64,14 +64,17 @@ public class Program
             Console.WriteLine("1. Registrar nuevo envío");
             Console.WriteLine("2. Cambiar estado de un pedido");
             Console.WriteLine("3. Cancelar un pedido");
-            Console.WriteLine("4. Listar pedidos por estado");
-            Console.WriteLine("5. Listar pedidos por método");
-            Console.WriteLine("6. Buscar pedido por código");
-            Console.WriteLine("7. Crear respaldo");
-            Console.WriteLine("8. Listar respaldo");
-            Console.WriteLine("9. Restaurar respaldo");
-            Console.WriteLine("10. Salir");
-            Console.Write("Seleccione una opción (1-10): ");
+            Console.WriteLine("4. Buscar pedido por código");
+            Console.WriteLine("5. Buscar pedidos por DNI");
+            Console.WriteLine("6. Listar pedidos por estado");
+            Console.WriteLine("7. Listar pedidos por método");
+            Console.WriteLine("8. Listar clientes registrados");
+            Console.WriteLine("9. Reporte de estadísticas generales");
+            Console.WriteLine("10. Crear respaldo");
+            Console.WriteLine("11. Listar respaldos");
+            Console.WriteLine("12. Restaurar respaldo");
+            Console.WriteLine("13. Salir");
+            Console.Write("Seleccione una opción (1-13): ");
 
             string? opcion = Console.ReadLine();
             Console.WriteLine();
@@ -88,24 +91,33 @@ public class Program
                     CancelarPedido();
                     break;
                 case "4":
-                    ListarPorEstado();
-                    break;
-                case "5":
-                    ListarPorMetodo();
-                    break;
-                case "6":
                     BuscarPorCodigo();
                     break;
+                case "5":
+                    BuscarPorDni();
+                    break;
+                case "6":
+                    ListarPorEstado();
+                    break;
                 case "7":
-                    CrearRespaldo();
+                    ListarPorMetodo();
                     break;
                 case "8":
-                    ListarRespaldos();
+                    ListarClientes();
                     break;
                 case "9":
+                    MostrarResumenEstadisticas();
+                    break;
+                case "10":
+                    CrearRespaldo();
+                    break;
+                case "11":
+                    ListarRespaldos();
+                    break;
+                case "12":
                     RestaurarRespaldo();
                     break;    
-                case "10":
+                case "13":
                     GuardarDatos();//Guarda los pedidos registrados
                     Console.WriteLine("Datos guardados con éxito. Saliendo del programa...");
                     ejecutando = false;
@@ -189,7 +201,7 @@ public class Program
         celulares[cantidadpedidos] = celular;
 
         Console.Write("Metodo de envío (1.Agencia/2.Motorizado): ");
-        string opcMetodo = Console.ReadLine();
+        string opcMetodo = Console.ReadLine() ?? "";
         if (opcMetodo == "1")
         {
             metodos[cantidadpedidos] = "Agencia";
@@ -199,11 +211,11 @@ public class Program
             metodos[cantidadpedidos] = "Motorizado";
         }
         Console.Write("Dirección: ");
-        direcciones[cantidadpedidos] = Console.ReadLine();
+        direcciones[cantidadpedidos] = Console.ReadLine() ?? "";
         Console.Write("Detalle del pedido: ");
-        detalles[cantidadpedidos] = Console.ReadLine();
+        detalles[cantidadpedidos] = Console.ReadLine() ?? "";
         Console.Write("Fecha de envío DD-MM-AAAA: ");
-        fechas[cantidadpedidos] = Console.ReadLine();
+        fechas[cantidadpedidos] = Console.ReadLine() ?? "";
         codigos[cantidadpedidos] = "ENV" + (cantidadpedidos + 1).ToString("D3");
         estados[cantidadpedidos] = "Registrado";
         Console.WriteLine($"Pedido registrado CÓDIGO UNICO: {codigos[cantidadpedidos]}");
@@ -476,6 +488,83 @@ public class Program
         {
             Console.WriteLine("Operación anulada. El pedido no fue modificado.");
         }
+    }
+
+    static void ListarClientes()
+    {
+        Console.WriteLine("--- CLIENTES REGISTRADOS ---");
+        if (!File.Exists(rutaUsuarios))
+        {
+            Console.WriteLine("No se encontró el archivo de usuarios.");
+            return;
+        }
+
+        string[] lineas = File.ReadAllLines(rutaUsuarios);
+        int total = 0;
+
+        for (int i = 0; i < lineas.Length; i++)
+        {
+            if (string.IsNullOrWhiteSpace(lineas[i])) continue;
+            string[] datos = lineas[i].Split('|');
+            if (datos.Length >= 2)
+            {
+                total++;
+                Console.WriteLine($"{total}. DNI: {datos[0]} - Nombre: {datos[1]}");
+            }
+        }
+
+        if (total == 0)
+        {
+            Console.WriteLine("No hay clientes registrados en usuarios.txt.");
+        }
+        else
+        {
+            Console.WriteLine($"\nTotal de clientes registrados: {total}");
+        }
+    }
+
+    static void MostrarResumenEstadisticas()
+    {
+        Console.WriteLine("============================================");
+        Console.WriteLine("       REPORTE DE ESTADÍSTICAS GENERALES    ");
+        Console.WriteLine("============================================");
+
+        if (cantidadpedidos == 0)
+        {
+            Console.WriteLine("Aún no hay pedidos registrados en el sistema.");
+            return;
+        }
+
+        int cRegistrado = 0, cEnviado = 0, cEntregado = 0, cRecogido = 0, cCancelado = 0;
+        int cAgencia = 0, cMotorizado = 0;
+
+        for (int i = 0; i < cantidadpedidos; i++)
+        {
+            switch (estados[i])
+            {
+                case "Registrado": cRegistrado++; break;
+                case "Enviado": cEnviado++; break;
+                case "Entregado": cEntregado++; break;
+                case "Recogido": cRecogido++; break;
+                case "Cancelado": cCancelado++; break;
+            }
+
+            if (metodos[i] == "Agencia") cAgencia++;
+            else if (metodos[i] == "Motorizado") cMotorizado++;
+        }
+
+        Console.WriteLine($"Total de pedidos registrados: {cantidadpedidos}");
+        Console.WriteLine("\n>> POR ESTADO:");
+        Console.WriteLine($"   - Registrados: {cRegistrado}");
+        Console.WriteLine($"   - Enviados:    {cEnviado}");
+        Console.WriteLine($"   - Entregados:  {cEntregado}");
+        Console.WriteLine($"   - Recogidos:   {cRecogido}");
+        Console.WriteLine($"   - Cancelados:  {cCancelado}");
+
+        Console.WriteLine("\n>> POR MÉTODO DE ENVÍO:");
+        Console.WriteLine($"   - Agencia:     {cAgencia}");
+        Console.WriteLine($"   - Motorizado:  {cMotorizado}");
+        Console.WriteLine("============================================");
     }
 
     //Metodos de percistencia: Guardar y Cargar  : Josemaria Roque
