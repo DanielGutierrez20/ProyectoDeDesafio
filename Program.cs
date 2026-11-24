@@ -14,6 +14,7 @@ public class Program
     static string[] fechas = new string[100];
     static string[] estados = new string[100];
     static string[] dnis = new string[100]; 
+    static string[] detalles = new string[100]; 
     static int cantidadpedidos = 0;
 
     // Commit 2: ubicar la raíz del proyecto
@@ -171,6 +172,8 @@ public class Program
         }
         Console.Write("Dirección: ");
         direcciones[cantidadpedidos] = Console.ReadLine();
+        Console.Write("Detalle de pedido: ");
+        detalles[cantidadpedidos] = Console.ReadLine();
         Console.Write("Fecha de envío DD-MM-AAAA: ");
         fechas[cantidadpedidos] = Console.ReadLine();
         codigos[cantidadpedidos] = "ENV" + (cantidadpedidos + 1).ToString("D3");
@@ -243,6 +246,7 @@ public class Program
                         hayRegistros = true;
                     }
                     Console.WriteLine($"   {fechas[i]} - {codigos[i]} - {nombres[i]} ({metodos[i]})");
+                    Console.WriteLine($"    Detalle del pedido: {detalles[i]}"); 
                 }
             }
         }
@@ -268,6 +272,7 @@ public class Program
                         hayRegistros = true;
                     }
                     Console.WriteLine($"   {fechas[i]} - {codigos[i]} - {nombres[i]} - Estado: {estados[i]}");
+                    Console.WriteLine($"    Detalle del pedido: {detalles[i]}"); 
                 }
             }
         }
@@ -290,6 +295,7 @@ public class Program
                 Console.WriteLine($"Código: {codigos[i]}");
                 Console.WriteLine($"Cliente: {nombres[i]} | Celular: {celulares[i]}");
                 Console.WriteLine($"Método: {metodos[i]} | Dirección: {direcciones[i]}");
+                Console.WriteLine($"Detalle del pedido: {detalles[i]}");
                 Console.WriteLine($"Fecha: {fechas[i]} | ESTADO: {estados[i]}");
                 encontrado = true;
                 break;
@@ -321,6 +327,7 @@ public class Program
                 Console.WriteLine($"Código: {codigos[i]}");
                 Console.WriteLine($"Cliente: {nombres[i]} | DNI: {dnis[i]} | Celular: {celulares[i]}");
                 Console.WriteLine($"Método: {metodos[i]} | Dirección: {direcciones[i]}");
+                Console.WriteLine($"Detalle del pedido: {detalles[i]}"); 
                 Console.WriteLine($"Fecha: {fechas[i]} | ESTADO: {estados[i]}");
                 encontrado = true;
             }
@@ -341,7 +348,7 @@ public class Program
             {
                 for (int i = 0; i < cantidadpedidos; i++)
                 {
-                    sw.WriteLine($"{codigos[i]}|{dnis[i]}|{nombres[i]}|{celulares[i]}|{metodos[i]}|{direcciones[i]}|{fechas[i]}|{estados[i]}");
+                    sw.WriteLine($"{codigos[i]}|{dnis[i]}|{nombres[i]}|{celulares[i]}|{metodos[i]}|{direcciones[i]}|{detalles[i]}|{fechas[i]}|{estados[i]}");
                 }
             }
         }
@@ -361,7 +368,7 @@ public class Program
             {
                 if (string.IsNullOrWhiteSpace(linea)) continue;
                 string[] datos = linea.Split('|');
-                if (datos.Length == 8 && cantidadpedidos < 100)
+                if (datos.Length == 9 && cantidadpedidos < 100)
                 {
                     codigos[cantidadpedidos] = datos[0];
                     dnis[cantidadpedidos] = datos[1]; //DG
@@ -369,8 +376,9 @@ public class Program
                     celulares[cantidadpedidos] = datos[3];
                     metodos[cantidadpedidos] = datos[4];
                     direcciones[cantidadpedidos] = datos[5];
-                    fechas[cantidadpedidos] = datos[6];
-                    estados[cantidadpedidos] = datos[7];
+                    detalles[cantidadpedidos] = datos [6];
+                    fechas[cantidadpedidos] = datos[7];
+                    estados[cantidadpedidos] = datos[8];
                     cantidadpedidos++;
                 }
             }
