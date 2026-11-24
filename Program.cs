@@ -62,14 +62,16 @@ public class Program
             Console.WriteLine("   SISTEMA DE GESTIÓN DE ENVÍOS   ");
             Console.WriteLine("==================================");
             Console.WriteLine("1. Registrar nuevo envío");
-            Console.WriteLine("2. Listar pedidos por estado");
-            Console.WriteLine("3. Listar pedidos por método");
-            Console.WriteLine("4. Buscar pedido por código");
-            Console.WriteLine("5. Crear respaldo");
-            Console.WriteLine("6. Listar respaldo");
-            Console.WriteLine("7. Restaurar respaldo");
-            Console.WriteLine("8. Salir");
-            Console.Write("Seleccione una opción (1-8): ");
+            Console.WriteLine("2. Cambiar estado de un pedido");
+            Console.WriteLine("3. Cancelar un pedido");
+            Console.WriteLine("4. Listar pedidos por estado");
+            Console.WriteLine("5. Listar pedidos por método");
+            Console.WriteLine("6. Buscar pedido por código");
+            Console.WriteLine("7. Crear respaldo");
+            Console.WriteLine("8. Listar respaldo");
+            Console.WriteLine("9. Restaurar respaldo");
+            Console.WriteLine("10. Salir");
+            Console.Write("Seleccione una opción (1-10): ");
 
             string? opcion = Console.ReadLine();
             Console.WriteLine();
@@ -80,24 +82,30 @@ public class Program
                     registrarpedido();
                     break;
                 case "2":
-                    ListarPorEstado();
+                    CambiarEstadoPedido();
                     break;
                 case "3":
-                    ListarPorMetodo();
+                    CancelarPedido();
                     break;
                 case "4":
-                    BuscarPorCodigo();
+                    ListarPorEstado();
                     break;
                 case "5":
-                    CrearRespaldo();
+                    ListarPorMetodo();
                     break;
                 case "6":
-                    ListarRespaldos();
+                    BuscarPorCodigo();
                     break;
                 case "7":
+                    CrearRespaldo();
+                    break;
+                case "8":
+                    ListarRespaldos();
+                    break;
+                case "9":
                     RestaurarRespaldo();
                     break;    
-                case "8":
+                case "10":
                     GuardarDatos();//Guarda los pedidos registrados
                     Console.WriteLine("Datos guardados con éxito. Saliendo del programa...");
                     ejecutando = false;
@@ -262,7 +270,7 @@ public class Program
     static void ListarPorEstado()
     {
         Console.WriteLine("--- LISTADO POR ESTADO ---");
-        string[] estadosPosibles = { "Registrado", "Enviado", "Entregado", "Recogido" };
+        string[] estadosPosibles = { "Registrado", "Enviado", "Entregado", "Recogido", "Cancelado" };
 
         for (int e = 0; e < estadosPosibles.Length; e++)
         {
@@ -367,6 +375,106 @@ public class Program
         if (!encontrado)
         {
             Console.WriteLine("No se encontraron pedidos registrados con el DNI ingresado.");
+        }
+    }
+
+    static void CambiarEstadoPedido()
+    {
+        Console.WriteLine("--- CAMBIAR ESTADO DE UN PEDIDO ---");
+        Console.Write("Ingrese el código del pedido: ");
+        string codigoBuscado = Console.ReadLine()?.Trim() ?? "";
+
+        int indice = -1;
+        for (int i = 0; i < cantidadpedidos; i++)
+        {
+            if (string.Equals(codigos[i], codigoBuscado, StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(codigos[i], "ENV-" + codigoBuscado.PadLeft(3, '0'), StringComparison.OrdinalIgnoreCase))
+            {
+                indice = i;
+                break;
+            }
+        }
+
+        if (indice == -1)
+        {
+            Console.WriteLine("Error: Pedido no encontrado.");
+            return;
+        }
+
+        Console.WriteLine($"\nPedido encontrado: {codigos[indice]} - Cliente: {nombres[indice]}");
+        Console.WriteLine($"Estado actual: {estados[indice]}");
+        Console.WriteLine("\nSeleccione el nuevo estado:");
+        Console.WriteLine("1. Registrado");
+        Console.WriteLine("2. Enviado");
+        Console.WriteLine("3. Entregado");
+        Console.WriteLine("4. Recogido");
+        Console.WriteLine("5. Cancelado");
+        Console.Write("Opción (1-5): ");
+        string opc = Console.ReadLine()?.Trim() ?? "";
+
+        string nuevoEstado = opc switch
+        {
+            "1" => "Registrado",
+            "2" => "Enviado",
+            "3" => "Entregado",
+            "4" => "Recogido",
+            "5" => "Cancelado",
+            _ => ""
+        };
+
+        if (string.IsNullOrEmpty(nuevoEstado))
+        {
+            Console.WriteLine("Opción no válida. No se realizaron cambios.");
+            return;
+        }
+
+        estados[indice] = nuevoEstado;
+        GuardarDatos();
+        Console.WriteLine($"Estado actualizado con éxito a: {nuevoEstado}");
+    }
+
+    static void CancelarPedido()
+    {
+        Console.WriteLine("--- CANCELAR UN PEDIDO ---");
+        Console.Write("Ingrese el código del pedido a cancelar: ");
+        string codigoBuscado = Console.ReadLine()?.Trim() ?? "";
+
+        int indice = -1;
+        for (int i = 0; i < cantidadpedidos; i++)
+        {
+            if (string.Equals(codigos[i], codigoBuscado, StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(codigos[i], "ENV-" + codigoBuscado.PadLeft(3, '0'), StringComparison.OrdinalIgnoreCase))
+            {
+                indice = i;
+                break;
+            }
+        }
+
+        if (indice == -1)
+        {
+            Console.WriteLine("Error: Pedido no encontrado.");
+            return;
+        }
+
+        if (estados[indice] == "Cancelado")
+        {
+            Console.WriteLine("El pedido ya se encuentra en estado Cancelado.");
+            return;
+        }
+
+        Console.WriteLine($"\nPedido: {codigos[indice]} | Cliente: {nombres[indice]} | Estado actual: {estados[indice]}");
+        Console.Write("¿Está seguro de que desea cancelar este pedido? (SI / NO): ");
+        string confirmacion = Console.ReadLine()?.Trim().ToUpper() ?? "";
+
+        if (confirmacion == "SI" || confirmacion == "S")
+        {
+            estados[indice] = "Cancelado";
+            GuardarDatos();
+            Console.WriteLine("Pedido cancelado correctamente.");
+        }
+        else
+        {
+            Console.WriteLine("Operación anulada. El pedido no fue modificado.");
         }
     }
 
