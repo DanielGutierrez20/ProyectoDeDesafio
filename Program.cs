@@ -6,6 +6,7 @@ public class Program
     static string carpetaDatos = ObtenerRutaCarpetaDatos();
     static string rutaArchivo = Path.Combine(carpetaDatos, "pedidos.txt");
     static string rutaUsuarios = Path.Combine(carpetaDatos, "usuarios.txt");
+    static string carpetaRespaldos = Path.Combine(carpetaDatos, "respaldos");
     static string[] codigos = new string[100];
     static string[] nombres = new string[100];
     static string[] celulares = new string[100];
@@ -13,8 +14,8 @@ public class Program
     static string[] direcciones = new string[100];
     static string[] fechas = new string[100];
     static string[] estados = new string[100];
-    static string[] dnis = new string[100]; 
-    static string[] detalles = new string[100]; 
+    static string[] dnis = new string[100];
+    static string[] detalles = new string[100];
     static int cantidadpedidos = 0;
 
     // Commit 2: ubicar la raíz del proyecto
@@ -64,9 +65,11 @@ public class Program
             Console.WriteLine("2. Listar pedidos por estado");
             Console.WriteLine("3. Listar pedidos por método");
             Console.WriteLine("4. Buscar pedido por código");
-            Console.WriteLine("5. Buscar pedidos por DNI"); //DG - Agrego la opcion
-            Console.WriteLine("6. Salir");
-            Console.Write("Seleccione una opción (1-6): ");
+            Console.WriteLine("5. Crear respaldo");
+            Console.WriteLine("6. Listar respaldo");
+            Console.WriteLine("7. Restaurar respaldo");
+            Console.WriteLine("8. Salir");
+            Console.Write("Seleccione una opción (1-8): ");
 
             string? opcion = Console.ReadLine();
             Console.WriteLine();
@@ -86,9 +89,15 @@ public class Program
                     BuscarPorCodigo();
                     break;
                 case "5":
-                    BuscarPorDni();
+                    CrearRespaldo();
                     break;
                 case "6":
+                    ListarRespaldos();
+                    break;
+                case "7":
+                    RestaurarRespaldo();
+                    break;    
+                case "8":
                     GuardarDatos();//Guarda los pedidos registrados
                     Console.WriteLine("Datos guardados con éxito. Saliendo del programa...");
                     ejecutando = false;
@@ -172,7 +181,7 @@ public class Program
         }
         Console.Write("Dirección: ");
         direcciones[cantidadpedidos] = Console.ReadLine();
-        Console.Write("Detalle de pedido: ");
+        Console.Write("Detalle del pedido: ");
         detalles[cantidadpedidos] = Console.ReadLine();
         Console.Write("Fecha de envío DD-MM-AAAA: ");
         fechas[cantidadpedidos] = Console.ReadLine();
@@ -195,6 +204,39 @@ public class Program
         }
         return true;
     }
+    static void BuscarPorDni()
+{
+    Console.WriteLine("--- BUSCAR PEDIDOS POR DNI ---");
+    Console.Write("Ingrese el DNI a buscar (8 dígitos): ");
+    string dniBuscado = Console.ReadLine()?.Trim() ?? "";
+
+    if (!EsDniValido(dniBuscado))
+    {
+        Console.WriteLine("Error: El DNI debe tener exactamente 8 dígitos numéricos.");
+        return;
+    }
+
+    bool encontrado = false;
+
+    for (int i = 0; i < cantidadpedidos; i++)
+    {
+        if (string.Equals(dnis[i], dniBuscado, StringComparison.OrdinalIgnoreCase))
+        {
+            Console.WriteLine("\n--- RESUMEN ---");
+            Console.WriteLine($"Código: {codigos[i]}");
+            Console.WriteLine($"Cliente: {nombres[i]} | DNI: {dnis[i]} | Celular: {celulares[i]}");
+            Console.WriteLine($"Método: {metodos[i]} | Dirección: {direcciones[i]}");
+            Console.WriteLine($"Detalle del pedido: {detalles[i]}");
+            Console.WriteLine($"Fecha: {fechas[i]} | ESTADO: {estados[i]}");
+            encontrado = true;
+        }
+    }
+
+    if (!encontrado)
+    {
+        Console.WriteLine("No se encontraron pedidos registrados con el DNI ingresado.");
+    }
+}
 
     //Metodo que permite buscar validar si ya existe el dni ingresado en el archivo txt 
     static string? BuscarUsuarioPorDni(string dni)
@@ -358,6 +400,110 @@ public class Program
             Console.WriteLine("Error al guardar: " + ex.Message);
         }
     }
+    static void CrearRespaldo()
+    {
+        try
+        {
+            if (!File.Exists(rutaArchivo))
+            {
+                Console.WriteLine("No existe el archivo de pedidos.");
+                return;
+            }
+
+            if (!Directory.Exists(carpetaRespaldos))
+            {
+                Directory.CreateDirectory(carpetaRespaldos);
+            }
+            string nombreRespaldo = "respaldo_" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".txt";
+            string rutaRespaldo = Path.Combine(carpetaRespaldos, nombreRespaldo);
+            File.Copy(rutaArchivo, rutaRespaldo);
+            Console.WriteLine("Respaldo creado correctamente.");
+            Console.WriteLine("Archivo: " + nombreRespaldo);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error al crear respaldo: " + ex.Message);
+        }
+    }
+    static void ListarRespaldos()
+    {
+         if (!Directory.Exists(carpetaRespaldos))
+         {
+            Console.WriteLine("No existe la carpeta de respaldos.");
+            return;
+         }
+         string[] respaldos = Directory.GetFiles(carpetaRespaldos, "respaldo_*.txt");
+         if (respaldos.Length == 0)
+        {
+            Console.WriteLine("No hay respaldos disponibles");
+            return;
+        }
+        Console.WriteLine("Respaldos Disponibles");
+        for (int i=0; i<respaldos.Length; i++)
+        {
+            Console.WriteLine($"{i + 1}.{Path.GetFileName(respaldos[i])}");
+        }
+
+    }
+    static void RestaurarRespaldo()
+{
+    if (!Directory.Exists(carpetaRespaldos))
+    {
+        Console.WriteLine("No existe la carpeta de respaldos.");
+        return;
+    }
+    string[] respaldos = Directory.GetFiles(carpetaRespaldos, "respaldo_*.txt");
+
+    if (respaldos.Length == 0)
+    {
+        Console.WriteLine("No hay respaldos disponibles.");
+        return;
+    }
+    Console.WriteLine("\n--- SELECCIONAR RESPALDO ---");
+    for (int i = 0; i < respaldos.Length; i++)
+    {
+        Console.WriteLine($"{i + 1}. {Path.GetFileName(respaldos[i])}");
+    }
+    Console.Write("Seleccione el número del respaldo: ");
+    string opcion = Console.ReadLine() ?? "";
+    if (!int.TryParse(opcion, out int seleccion) ||
+        seleccion < 1 || seleccion > respaldos.Length)
+    {
+        Console.WriteLine("Selección no válida.");
+        return;
+    }
+    string rutaSeleccionada = respaldos[seleccion - 1];
+    try
+    {
+        string[] lineas = File.ReadAllLines(rutaSeleccionada);
+
+        foreach (string linea in lineas)
+        {
+            string[] datos = linea.Split('|');
+
+            if (datos.Length != 7)
+            {
+                Console.WriteLine("El respaldo tiene un formato incorrecto.");
+                return;
+            }
+        }
+        GuardarDatos();
+
+        CrearRespaldo();
+
+        File.Copy(rutaSeleccionada, rutaArchivo, true);
+        cantidadpedidos = 0;
+
+        CargarDatos();
+
+        Console.WriteLine("Respaldo restaurado correctamente.");
+    }
+
+    catch (Exception ex)
+    {
+        Console.WriteLine("Error al restaurar: " + ex.Message);
+    }
+}
 
     static void CargarDatos()
     {
