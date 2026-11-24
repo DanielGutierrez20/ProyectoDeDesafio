@@ -63,8 +63,9 @@ public class Program
             Console.WriteLine("2. Listar pedidos por estado");
             Console.WriteLine("3. Listar pedidos por método");
             Console.WriteLine("4. Buscar pedido por código");
-            Console.WriteLine("5. Salir");
-            Console.Write("Seleccione una opción (1-5): ");
+            Console.WriteLine("5. Buscar pedidos por DNI"); //DG - Agrego la opcion
+            Console.WriteLine("6. Salir");
+            Console.Write("Seleccione una opción (1-6): ");
 
             string? opcion = Console.ReadLine();
             Console.WriteLine();
@@ -84,6 +85,9 @@ public class Program
                     BuscarPorCodigo();
                     break;
                 case "5":
+                    BuscarPorDni();
+                    break;
+                case "6":
                     GuardarDatos();//Guarda los pedidos registrados
                     Console.WriteLine("Datos guardados con éxito. Saliendo del programa...");
                     ejecutando = false;
@@ -355,16 +359,18 @@ public class Program
             string[] lineas = File.ReadAllLines(rutaArchivo);
             foreach (string linea in lineas)
             {
+                if (string.IsNullOrWhiteSpace(linea)) continue;
                 string[] datos = linea.Split('|');
-                if (datos.Length == 7 && cantidadpedidos < 100)
+                if (datos.Length == 8 && cantidadpedidos < 100)
                 {
                     codigos[cantidadpedidos] = datos[0];
-                    nombres[cantidadpedidos] = datos[1];
-                    celulares[cantidadpedidos] = datos[2];
-                    metodos[cantidadpedidos] = datos[3];
-                    direcciones[cantidadpedidos] = datos[4];
-                    fechas[cantidadpedidos] = datos[5];
-                    estados[cantidadpedidos] = datos[6];
+                    dnis[cantidadpedidos] = datos[1]; //DG
+                    nombres[cantidadpedidos] = datos[2];
+                    celulares[cantidadpedidos] = datos[3];
+                    metodos[cantidadpedidos] = datos[4];
+                    direcciones[cantidadpedidos] = datos[5];
+                    fechas[cantidadpedidos] = datos[6];
+                    estados[cantidadpedidos] = datos[7];
                     cantidadpedidos++;
                 }
             }
