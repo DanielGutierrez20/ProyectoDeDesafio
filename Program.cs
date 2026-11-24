@@ -14,6 +14,8 @@ public class Program
     static string[] direcciones = new string[100];
     static string[] fechas = new string[100];
     static string[] estados = new string[100];
+    static string[] dnis = new string[100];
+    static string[] detalles = new string[100];
     static int cantidadpedidos = 0;
 
     // Commit 2: ubicar la raíz del proyecto
@@ -63,11 +65,11 @@ public class Program
             Console.WriteLine("2. Listar pedidos por estado");
             Console.WriteLine("3. Listar pedidos por método");
             Console.WriteLine("4. Buscar pedido por código");
-            Console.WriteLine("5. Salir");
-            Console.WriteLine("6. Crear respaldo");
-            Console.WriteLine("7. Listar respaldo");
-            Console.WriteLine("8. Restaurar respaldo");
-            Console.Write("Seleccione una opción (1-5): ");
+            Console.WriteLine("5. Crear respaldo");
+            Console.WriteLine("6. Listar respaldo");
+            Console.WriteLine("7. Restaurar respaldo");
+            Console.WriteLine("8. Salir");
+            Console.Write("Seleccione una opción (1-8): ");
 
             string? opcion = Console.ReadLine();
             Console.WriteLine();
@@ -118,6 +120,8 @@ public class Program
         }
         Console.Write("Nombre del cliente: ");
         nombres[cantidadpedidos] = Console.ReadLine();
+        Console.Write("DNI del cliente: ");
+        dnis[cantidadpedidos] = Console.ReadLine();
         Console.Write("Celular: ");
         celulares[cantidadpedidos] = Console.ReadLine();
         Console.Write("Metodo de envío (1.Agencia/2.Motorizado): ");
@@ -132,6 +136,8 @@ public class Program
         }
         Console.Write("Dirección: ");
         direcciones[cantidadpedidos] = Console.ReadLine();
+        Console.Write("Detalle del pedido: ");
+        detalles[cantidadpedidos] = Console.ReadLine();
         Console.Write("Fecha de envío DD-MM-AAAA: ");
         fechas[cantidadpedidos] = Console.ReadLine();
         codigos[cantidadpedidos] = "ENV" + (cantidadpedidos + 1).ToString("D3");
@@ -150,6 +156,39 @@ public class Program
         }
         return true;
     }
+    static void BuscarPorDni()
+{
+    Console.WriteLine("--- BUSCAR PEDIDOS POR DNI ---");
+    Console.Write("Ingrese el DNI a buscar (8 dígitos): ");
+    string dniBuscado = Console.ReadLine()?.Trim() ?? "";
+
+    if (!EsDniValido(dniBuscado))
+    {
+        Console.WriteLine("Error: El DNI debe tener exactamente 8 dígitos numéricos.");
+        return;
+    }
+
+    bool encontrado = false;
+
+    for (int i = 0; i < cantidadpedidos; i++)
+    {
+        if (string.Equals(dnis[i], dniBuscado, StringComparison.OrdinalIgnoreCase))
+        {
+            Console.WriteLine("\n--- RESUMEN ---");
+            Console.WriteLine($"Código: {codigos[i]}");
+            Console.WriteLine($"Cliente: {nombres[i]} | DNI: {dnis[i]} | Celular: {celulares[i]}");
+            Console.WriteLine($"Método: {metodos[i]} | Dirección: {direcciones[i]}");
+            Console.WriteLine($"Detalle del pedido: {detalles[i]}");
+            Console.WriteLine($"Fecha: {fechas[i]} | ESTADO: {estados[i]}");
+            encontrado = true;
+        }
+    }
+
+    if (!encontrado)
+    {
+        Console.WriteLine("No se encontraron pedidos registrados con el DNI ingresado.");
+    }
+}
 
     //Metodo que permite buscar validar si ya existe el dni ingresado en el archivo txt 
     static string? BuscarUsuarioPorDni(string dni)
