@@ -6,6 +6,7 @@ public class Program
     static string carpetaDatos = ObtenerRutaCarpetaDatos();
     static string rutaArchivo = Path.Combine(carpetaDatos, "pedidos.txt");
     static string rutaUsuarios = Path.Combine(carpetaDatos, "usuarios.txt");
+    static string carpetaRespaldos = Path.Combine(carpetaDatos, "respaldos");
     static string[] codigos = new string[100];
     static string[] nombres = new string[100];
     static string[] celulares = new string[100];
@@ -51,6 +52,7 @@ public class Program
     public static void Main()
     {
         AsegurarArchivos();
+        CrearRespaldo();
         CargarDatos(); //Carga los pedidos guardados al arrancar
         bool ejecutando = true;
         while (ejecutando)
@@ -260,6 +262,31 @@ public class Program
         catch (Exception ex)
         {
             Console.WriteLine("Error al guardar: " + ex.Message);
+        }
+    }
+    static void CrearRespaldo()
+    {
+        try
+        {
+            if (!File.Exists(rutaArchivo))
+            {
+                Console.WriteLine("No existe el archivo de pedidos.");
+                return;
+            }
+
+            if (!Directory.Exists(carpetaRespaldos))
+            {
+                Directory.CreateDirectory(carpetaRespaldos);
+            }
+            string nombreRespaldo = "respaldo_" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".txt";
+            string rutaRespaldo = Path.Combine(carpetaRespaldos, nombreRespaldo);
+            File.Copy(rutaArchivo, rutaRespaldo);
+            Console.WriteLine("Respaldo creado correctamente.");
+            Console.WriteLine("Archivo: " + nombreRespaldo);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error al crear respaldo: " + ex.Message);
         }
     }
 
