@@ -204,40 +204,6 @@ public class Program
         }
         return true;
     }
-    static void BuscarPorDni()
-{
-    Console.WriteLine("--- BUSCAR PEDIDOS POR DNI ---");
-    Console.Write("Ingrese el DNI a buscar (8 dígitos): ");
-    string dniBuscado = Console.ReadLine()?.Trim() ?? "";
-
-    if (!EsDniValido(dniBuscado))
-    {
-        Console.WriteLine("Error: El DNI debe tener exactamente 8 dígitos numéricos.");
-        return;
-    }
-
-    bool encontrado = false;
-
-    for (int i = 0; i < cantidadpedidos; i++)
-    {
-        if (string.Equals(dnis[i], dniBuscado, StringComparison.OrdinalIgnoreCase))
-        {
-            Console.WriteLine("\n--- RESUMEN ---");
-            Console.WriteLine($"Código: {codigos[i]}");
-            Console.WriteLine($"Cliente: {nombres[i]} | DNI: {dnis[i]} | Celular: {celulares[i]}");
-            Console.WriteLine($"Método: {metodos[i]} | Dirección: {direcciones[i]}");
-            Console.WriteLine($"Detalle del pedido: {detalles[i]}");
-            Console.WriteLine($"Fecha: {fechas[i]} | ESTADO: {estados[i]}");
-            encontrado = true;
-        }
-    }
-
-    if (!encontrado)
-    {
-        Console.WriteLine("No se encontraron pedidos registrados con el DNI ingresado.");
-    }
-}
-
     //Metodo que permite buscar validar si ya existe el dni ingresado en el archivo txt 
     static string? BuscarUsuarioPorDni(string dni)
     {
@@ -481,7 +447,7 @@ public class Program
         {
             string[] datos = linea.Split('|');
 
-            if (datos.Length != 7)
+            if (datos.Length != 9 )
             {
                 Console.WriteLine("El respaldo tiene un formato incorrecto.");
                 return;
