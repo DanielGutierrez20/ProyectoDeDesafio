@@ -294,6 +294,40 @@ public class Program
         if (!encontrado) Console.WriteLine("Código no encontrado.");
     }
 
+    // Cambios de Daniel Gutierrez - Agregando funcion de busqueda
+    static void BuscarPorDni()
+    {
+        Console.WriteLine("--- BUSCAR PEDIDOS POR DNI ---");
+        Console.Write("Ingrese el DNI a buscar (8 dígitos): ");
+        string dniBuscado = Console.ReadLine()?.Trim() ?? "";
+
+        if (!EsDniValido(dniBuscado))
+        {
+            Console.WriteLine("Error: El DNI debe tener exactamente 8 dígitos numéricos.");
+            return;
+        }
+
+        bool encontrado = false;
+
+        for (int i = 0; i < cantidadpedidos; i++)
+        {
+            if (string.Equals(dnis[i], dniBuscado, StringComparison.OrdinalIgnoreCase))
+            {
+                Console.WriteLine("\n--- RESUMEN ---");
+                Console.WriteLine($"Código: {codigos[i]}");
+                Console.WriteLine($"Cliente: {nombres[i]} | DNI: {dnis[i]} | Celular: {celulares[i]}");
+                Console.WriteLine($"Método: {metodos[i]} | Dirección: {direcciones[i]}");
+                Console.WriteLine($"Fecha: {fechas[i]} | ESTADO: {estados[i]}");
+                encontrado = true;
+            }
+        }
+
+        if (!encontrado)
+        {
+            Console.WriteLine("No se encontraron pedidos registrados con el DNI ingresado.");
+        }
+    }
+
     //Metodos de percistencia: Guardar y Cargar  : Josemaria Roque
     static void GuardarDatos()
     {
