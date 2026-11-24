@@ -52,7 +52,7 @@ public class Program
     public static void Main()
     {
         AsegurarArchivos();
-        CrearRespaldo();
+        ListarRespaldos();
         CargarDatos(); //Carga los pedidos guardados al arrancar
         bool ejecutando = true;
         while (ejecutando)
@@ -288,6 +288,26 @@ public class Program
         {
             Console.WriteLine("Error al crear respaldo: " + ex.Message);
         }
+    }
+    static void ListarRespaldos()
+    {
+         if (!Directory.Exists(carpetaRespaldos))
+         {
+            Console.WriteLine("No existe la carpeta de respaldos.");
+            return;
+         }
+         string[] respaldos = Directory.GetFiles(carpetaRespaldos, "respaldo_*.txt");
+         if (respaldos.Length == 0)
+        {
+            Console.WriteLine("No hay respaldos disponibles");
+            return;
+        }
+        Console.WriteLine("Respaldos Disponibles");
+        for (int i=0; i<respaldos.Length; i++)
+        {
+            Console.WriteLine($"{i + 1}.{Path.GetFileName(respaldos[i])}");
+        }
+
     }
 
     static void CargarDatos()
