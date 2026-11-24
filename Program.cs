@@ -13,6 +13,7 @@ public class Program
     static string[] direcciones = new string[100];
     static string[] fechas = new string[100];
     static string[] estados = new string[100];
+    static string[] dnis = new string[100]; 
     static int cantidadpedidos = 0;
 
     // Commit 2: ubicar la raíz del proyecto
@@ -103,8 +104,55 @@ public class Program
             Console.WriteLine("error: Se alcanzo el limite maximo de 100 pedidos.");
             return;
         }
-        Console.Write("Nombre del cliente: ");
-        nombres[cantidadpedidos] = Console.ReadLine();
+
+        // Modificación de Daniel Gutierrez - validar dni y crear usuario con dni nuevo
+        string dni = "";
+        while (true)
+        {
+            Console.Write("DNI del cliente (8 dígitos): ");
+            dni = Console.ReadLine()?.Trim() ?? "";
+
+            if (EsDniValido(dni))
+            {
+                break;
+            }
+            Console.WriteLine("Error: El DNI debe tener exactamente 8 dígitos numéricos. Intente nuevamente.");
+        }
+
+        string? nombreCliente = BuscarUsuarioPorDni(dni);
+
+        if (nombreCliente != null)
+        {
+            Console.WriteLine($"Cliente encontrado: {nombreCliente}");
+        }
+        else
+        {
+            Console.WriteLine("El DNI no se encuentra registrado.");
+            Console.Write("¿Desea registrar usuario? (SI / NO): ");
+            string resp = Console.ReadLine()?.Trim().ToUpper() ?? "";
+
+            if (resp == "SI" || resp == "S" || resp == "1")
+            {
+                Console.Write("Nombre del cliente: ");
+                nombreCliente = Console.ReadLine()?.Trim() ?? "";
+                if (string.IsNullOrWhiteSpace(nombreCliente))
+                {
+                    Console.WriteLine("Error: El nombre no puede estar vacío. Pedido cancelado.");
+                    return;
+                }
+                RegistrarUsuario(dni, nombreCliente);
+                Console.WriteLine("Usuario registrado con éxito.");
+            }
+            else
+            {
+                Console.WriteLine("Pedido cancelado.");
+                return;
+            }
+        }
+
+        dnis[cantidadpedidos] = dni;
+        nombres[cantidadpedidos] = nombreCliente; //DG
+
         Console.Write("Celular: ");
         celulares[cantidadpedidos] = Console.ReadLine();
         Console.Write("Metodo de envío (1.Agencia/2.Motorizado): ");
@@ -125,6 +173,9 @@ public class Program
         estados[cantidadpedidos] = "Registrado";
         Console.WriteLine($"Pedido registrado CÓDIGO UNICO: {codigos[cantidadpedidos]}");
         cantidadpedidos++;
+
+        // DG- Guarda inmediatamente el pedido para no perder datos si se cierra la consola
+        GuardarDatos();
     }
 
     //Metodo para validar que el Dni tenga 8 caracteres: Josemaria Roque
@@ -252,7 +303,7 @@ public class Program
             {
                 for (int i = 0; i < cantidadpedidos; i++)
                 {
-                    sw.WriteLine($"{codigos[i]}|{nombres[i]}|{celulares[i]}|{metodos[i]}|{direcciones[i]}|{fechas[i]}|{estados[i]}");
+                    sw.WriteLine($"{codigos[i]}|{dnis[i]}|{nombres[i]}|{celulares[i]}|{metodos[i]}|{direcciones[i]}|{fechas[i]}|{estados[i]}");
                 }
             }
         }
