@@ -167,8 +167,19 @@ public class Program
         dnis[cantidadpedidos] = dni;
         nombres[cantidadpedidos] = nombreCliente; //DG
 
-        Console.Write("Celular: ");
-        celulares[cantidadpedidos] = Console.ReadLine();
+        string celular = "";
+        while (true)
+        {
+            Console.Write("Celular (9 dígitos, inicia con 9): ");
+            celular = Console.ReadLine()?.Trim() ?? "";
+            if (EsCelularValido(celular))
+            {
+                break;
+            }
+            Console.WriteLine("Error: El celular debe tener exactamente 9 dígitos numéricos y comenzar con 9. Intente nuevamente.");
+        }
+        celulares[cantidadpedidos] = celular;
+
         Console.Write("Metodo de envío (1.Agencia/2.Motorizado): ");
         string opcMetodo = Console.ReadLine();
         if (opcMetodo == "1")
@@ -192,6 +203,18 @@ public class Program
 
         // DG- Guarda inmediatamente el pedido para no perder datos si se cierra la consola
         GuardarDatos();
+    }
+
+    //Metodo para validar que el Celular tenga 9 digitos y empiece con 9
+    static bool EsCelularValido(string celular)
+    {
+        if (celular.Length != 9) return false;
+        if (celular[0] != '9') return false;
+        foreach (char c in celular)
+        {
+            if (!char.IsDigit(c)) return false;
+        }
+        return true;
     }
 
     //Metodo para validar que el Dni tenga 8 caracteres: Josemaria Roque
