@@ -52,7 +52,6 @@ public class Program
     public static void Main()
     {
         AsegurarArchivos();
-        ListarRespaldos();
         CargarDatos(); //Carga los pedidos guardados al arrancar
         bool ejecutando = true;
         while (ejecutando)
@@ -65,6 +64,9 @@ public class Program
             Console.WriteLine("3. Listar pedidos por método");
             Console.WriteLine("4. Buscar pedido por código");
             Console.WriteLine("5. Salir");
+            Console.WriteLine("6. Crear respaldo");
+            Console.WriteLine("7. Listar respaldo");
+            Console.WriteLine("8. Restaurar respaldo");
             Console.Write("Seleccione una opción (1-5): ");
 
             string? opcion = Console.ReadLine();
@@ -85,6 +87,15 @@ public class Program
                     BuscarPorCodigo();
                     break;
                 case "5":
+                    CrearRespaldo();
+                    break;
+                case "6":
+                    ListarRespaldos();
+                    break;
+                case "7":
+                    RestaurarRespaldo();
+                    break;    
+                case "8":
                     GuardarDatos();//Guarda los pedidos registrados
                     Console.WriteLine("Datos guardados con éxito. Saliendo del programa...");
                     ejecutando = false;
@@ -309,6 +320,65 @@ public class Program
         }
 
     }
+    static void RestaurarRespaldo()
+{
+    if (!Directory.Exists(carpetaRespaldos))
+    {
+        Console.WriteLine("No existe la carpeta de respaldos.");
+        return;
+    }
+    string[] respaldos = Directory.GetFiles(carpetaRespaldos, "respaldo_*.txt");
+
+    if (respaldos.Length == 0)
+    {
+        Console.WriteLine("No hay respaldos disponibles.");
+        return;
+    }
+    Console.WriteLine("\n--- SELECCIONAR RESPALDO ---");
+    for (int i = 0; i < respaldos.Length; i++)
+    {
+        Console.WriteLine($"{i + 1}. {Path.GetFileName(respaldos[i])}");
+    }
+    Console.Write("Seleccione el número del respaldo: ");
+    string opcion = Console.ReadLine() ?? "";
+    if (!int.TryParse(opcion, out int seleccion) ||
+        seleccion < 1 || seleccion > respaldos.Length)
+    {
+        Console.WriteLine("Selección no válida.");
+        return;
+    }
+    string rutaSeleccionada = respaldos[seleccion - 1];
+    try
+    {
+        string[] lineas = File.ReadAllLines(rutaSeleccionada);
+
+        foreach (string linea in lineas)
+        {
+            string[] datos = linea.Split('|');
+
+            if (datos.Length != 7)
+            {
+                Console.WriteLine("El respaldo tiene un formato incorrecto.");
+                return;
+            }
+        }
+        GuardarDatos();
+
+        CrearRespaldo();
+
+        File.Copy(rutaSeleccionada, rutaArchivo, true);
+        cantidadpedidos = 0;
+
+        CargarDatos();
+
+        Console.WriteLine("Respaldo restaurado correctamente.");
+    }
+
+    catch (Exception ex)
+    {
+        Console.WriteLine("Error al restaurar: " + ex.Message);
+    }
+}
 
     static void CargarDatos()
     {
