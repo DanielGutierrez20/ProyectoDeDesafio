@@ -1,5 +1,7 @@
 using System;
-using System.Collections.Generic; 
+using System.Collections.Generic;
+using System.Globalization;
+using System.Text; 
 
 public static class CotizadorEnvios
 {
@@ -73,9 +75,8 @@ public static class CotizadorEnvios
             Console.WriteLine("1. Envío por Motorizado");
             Console.WriteLine("2. Envío por Agencia");
             Console.WriteLine("3. Volver al menú principal");
-            Console.Write("Seleccione modalidad (1-3): ");
-
-            string opcion = (Console.ReadLine() ?? "").Trim();
+            
+            string opcion = LeerOpcionNumerica("Seleccione modalidad (1-3): ", 1, 3);
             Console.WriteLine();
 
             switch (opcion)
@@ -99,15 +100,17 @@ public static class CotizadorEnvios
     private static void CotizarMotorizado()
     {
         Console.WriteLine("--- COTIZACIÓN: MOTORIZADO (LIMA) ---");
-        Console.Write("Ingrese el distrito de destino: ");
-        string distritoIngresado = (Console.ReadLine() ?? "").Trim();
+         // Valida que solo ingresen letras y espacios (sin números ni caracteres especiales)
+        string distritoIngresado = LeerSoloLetras("Ingrese el distrito de destino: ");
+        string entradaNorm = NormalizarTexto(distritoIngresado);
+
 
         string? distritoEncontrado = null;
         double tarifaDistrito = 0;
 
         foreach (var item in tarifasDistritos)
         {
-            if (string.Equals(item.Key, distritoIngresado, StringComparison.OrdinalIgnoreCase))
+            if (NormalizarTexto(item.Key) == entradaNorm)
             {
                 distritoEncontrado = item.Key;
                 tarifaDistrito = item.Value;
@@ -126,8 +129,9 @@ public static class CotizadorEnvios
         Console.WriteLine($"1. Mañana    (+S/ {RECARGO_MANANA:F2})");
         Console.WriteLine("2. Mediodía  (Precio normal)");
         Console.WriteLine($"3. Noche     (+S/ {RECARGO_NOCHE:F2})");
-        Console.Write("Horario (1-3): ");
-        string opcionHorario = (Console.ReadLine() ?? "").Trim();
+
+        //Valida que la opcion obligatoriamente cumpla con lo pedido
+        string opcionHorario = LeerOpcionNumerica("Horario (1-3): ", 1, 3);
 
         string nombreHorario;
         double recargoHorario;
@@ -219,5 +223,62 @@ public static class CotizadorEnvios
         Console.WriteLine($"Talla paquete:   {tallaSeleccionada}");
         Console.WriteLine("-----------------------------");
         Console.WriteLine($"TOTAL ESTIMADO:  S/ {total:F2}");
+    }
+
+//Funciones para validar que el Ingreso de datos sea el adecuado
+    private static string LeerSoloLetras(string mensaje)
+    {
+        while (true)
+        {
+            Console.Write(mensaje);
+            string entrada = (Console.ReadLine() ?? "").Trim();
+
+            bool esValido = !string.IsNullOrWhiteSpace(entrada);
+            foreach (char c in entrada)
+            {
+                if (!char.IsLetter(c) && c != ' ')
+                {
+                    esValido = false;
+                    break;
+                }
+            }
+
+            if (esValido) return entrada;
+
+            Console.WriteLine("Error: Ingrese solo letras (sin números ni caracteres especiales). Intente nuevamente.");
+        }
+    }
+
+    private static string LeerOpcionNumerica(string mensaje, int min, int max)
+    {
+        while (true)
+        {
+            Console.Write(mensaje);
+            string entrada = (Console.ReadLine() ?? "").Trim();
+
+            if (int.TryParse(entrada, out int numero) && numero >= min && numero <= max)
+            {
+                return numero.ToString();
+            }
+
+            Console.WriteLine($"Error: Ingrese solo un número válido entre {min} y {max} (sin letras ni símbolos).");
+        }
+    }
+
+    private static string NormalizarTexto(string texto)
+    {
+        string limpio = string.Join(" ", texto.Split(' ', StringSplitOptions.RemoveEmptyEntries));
+        string normalizado = limpio.ToLower().Normalize(NormalizationForm.FormD);
+        StringBuilder sb = new StringBuilder();
+
+        foreach (char c in normalizado)
+        {
+            if (CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
+            {
+                sb.Append(c);
+            }
+        }
+
+        return sb.ToString().Normalize(NormalizationForm.FormC);
     }
 }
