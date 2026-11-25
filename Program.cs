@@ -126,8 +126,7 @@ public class Program
                     ejecutando = false;
                     break;
                 case "14":
-                    ConsultarHistorial();
-                    break;
+                    Con1
                 case "15":
                     CotizadorEnvios.MostrarCotizador();//Conexion con el Modulo CotizadorEnvios.cs 
                     break;
