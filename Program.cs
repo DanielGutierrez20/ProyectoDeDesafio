@@ -1,4 +1,4 @@
-using System; 
+﻿using System; 
 using System.IO;            
 public class Program
 {
@@ -7,6 +7,7 @@ public class Program
     static string rutaArchivo = Path.Combine(carpetaDatos, "pedidos.txt");
     static string rutaUsuarios = Path.Combine(carpetaDatos, "usuarios.txt");
     static string carpetaRespaldos = Path.Combine(carpetaDatos, "respaldos");
+    static string rutaHistorial = Path.Combine(carpetaDatos, "historial.txt");
     static string[] codigos = new string[100];
     static string[] nombres = new string[100];
     static string[] celulares = new string[100];
@@ -42,6 +43,7 @@ public class Program
             if (!Directory.Exists(carpetaDatos)) Directory.CreateDirectory(carpetaDatos);
             if (!File.Exists(rutaUsuarios)) File.Create(rutaUsuarios).Close();
             if (!File.Exists(rutaArchivo)) File.Create(rutaArchivo).Close();
+            if (!File.Exists(rutaHistorial)) File.Create(rutaHistorial).Close();
         }
         catch (Exception ex)
         {
@@ -74,7 +76,8 @@ public class Program
             Console.WriteLine("11. Listar respaldos");
             Console.WriteLine("12. Restaurar respaldo");
             Console.WriteLine("13. Salir");
-            Console.Write("Seleccione una opción (1-13): ");
+            Console.WriteLine("14. Consultar historial de cambios");
+            Console.Write("Seleccione una opción (1-14): ");
 
             string? opcion = Console.ReadLine();
             Console.WriteLine();
@@ -121,6 +124,9 @@ public class Program
                     GuardarDatos();//Guarda los pedidos registrados
                     Console.WriteLine("Datos guardados con éxito. Saliendo del programa...");
                     ejecutando = false;
+                    break;
+                case "14":
+                    ConsultarHistorial();
                     break;
                 default:
                     Console.WriteLine("Opción no válida. Intente nuevamente.");
@@ -218,6 +224,7 @@ public class Program
         fechas[cantidadpedidos] = Console.ReadLine() ?? "";
         codigos[cantidadpedidos] = "ENV" + (cantidadpedidos + 1).ToString("D3");
         estados[cantidadpedidos] = "Registrado";
+        RegistrarCambioEstado(codigos[cantidadpedidos],"Sin estado","Registrado");
         Console.WriteLine($"Pedido registrado CÓDIGO UNICO: {codigos[cantidadpedidos]}");
         cantidadpedidos++;
 
@@ -277,6 +284,58 @@ public class Program
         using (StreamWriter sw = File.AppendText(rutaUsuarios))
         {
             sw.WriteLine($"{dni.Trim()}|{nombre.Trim()}");
+        }
+    }
+    // Metodo para registrar los cambios de estado de los pedidos
+    static void RegistrarCambioEstado(string codigo, string estadoAnterior, string estadoNuevo)
+    {
+        try
+        {
+            string fechaHora = DateTime.Now.ToString("dd/MM/aaaa HH:mm:ss");
+            using (StreamWriter sw = File.AppendText(rutaHistorial))
+            {
+                sw.WriteLine($"{codigo}|{estadoAnterior}|{estadoNuevo}|{fechaHora}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error al registrar el historial: " + ex.Message);
+        }
+    }
+    // Método para consultar el historial de cambios de un pedido
+    static void ConsultarHistorial()
+    {
+        Console.WriteLine("\n--- HISTORIAL DE CAMBIOS ---");
+        Console.Write("Ingrese el código del pedido: ");
+        string codigoBuscado = Console.ReadLine()?.Trim() ?? "";
+        if (!File.Exists(rutaHistorial))
+        {
+            Console.WriteLine("No existe el archivo de historial.");
+            return;
+        }
+        string[] lineas = File.ReadAllLines(rutaHistorial);
+        bool encontrado = false;
+        Console.WriteLine("\n======================================");
+        Console.WriteLine("HISTORIAL DEL PEDIDO");
+        Console.WriteLine("======================================");
+        foreach (string linea in lineas)
+        {
+            if (string.IsNullOrWhiteSpace(linea))
+            continue;
+            string[] datos = linea.Split('|');
+            if (datos.Length == 4 &&string.Equals(datos[0], codigoBuscado,StringComparison.OrdinalIgnoreCase))
+            {
+                Console.WriteLine($"Código: {datos[0]}");
+                Console.WriteLine($"Estado anterior: {datos[1]}");
+                Console.WriteLine($"Estado nuevo: {datos[2]}");
+                Console.WriteLine($"Fecha y hora: {datos[3]}");
+                Console.WriteLine("--------------------------------------");
+                encontrado = true;
+            }
+        }
+        if (!encontrado)
+        {
+            Console.WriteLine("No se encontraron movimientos para ese pedido.");
         }
     }
     static void ListarPorEstado()
@@ -439,12 +498,21 @@ public class Program
             Console.WriteLine("Opción no válida. No se realizaron cambios.");
             return;
         }
-
+        
+        // Verificar si el estado es diferente al actual
+        if (estados[indice] == nuevoEstado)
+        {
+            Console.WriteLine("El pedido ya tiene ese estado.");
+            return;
+        }
+        string estadoAnterior = estados[indice];
         estados[indice] = nuevoEstado;
+        RegistrarCambioEstado(codigos[indice],estadoAnterior,nuevoEstado);
         GuardarDatos();
         Console.WriteLine($"Estado actualizado con éxito a: {nuevoEstado}");
-    }
+        Console.WriteLine("Movimiento guardado en el historial.");
 
+    }
     static void CancelarPedido()
     {
         Console.WriteLine("--- CANCELAR UN PEDIDO ---");
@@ -480,9 +548,12 @@ public class Program
 
         if (confirmacion == "SI" || confirmacion == "S")
         {
+            string estadoAnterior = estados[indice];
             estados[indice] = "Cancelado";
+            RegistrarCambioEstado(codigos[indice],estadoAnterior,"Cancelado");
             GuardarDatos();
             Console.WriteLine("Pedido cancelado correctamente.");
+            Console.WriteLine("Cancelación registrada en el historial.");
         }
         else
         {
