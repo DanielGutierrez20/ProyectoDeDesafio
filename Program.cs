@@ -508,9 +508,12 @@ public class Program
 
         if (confirmacion == "SI" || confirmacion == "S")
         {
+            string estadoAnterior = estados[indice];
             estados[indice] = "Cancelado";
+            RegistrarCambioEstado(codigos[indice],estadoAnterior,"Cancelado");
             GuardarDatos();
             Console.WriteLine("Pedido cancelado correctamente.");
+            Console.WriteLine("Cancelación registrada en el historial.");
         }
         else
         {
