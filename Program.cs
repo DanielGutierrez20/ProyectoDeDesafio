@@ -220,6 +220,7 @@ public class Program
         fechas[cantidadpedidos] = Console.ReadLine() ?? "";
         codigos[cantidadpedidos] = "ENV" + (cantidadpedidos + 1).ToString("D3");
         estados[cantidadpedidos] = "Registrado";
+        RegistrarCambioEstado(codigos[cantidadpedidos],"Sin estado","Registrado");
         Console.WriteLine($"Pedido registrado CÓDIGO UNICO: {codigos[cantidadpedidos]}");
         cantidadpedidos++;
 
@@ -279,6 +280,22 @@ public class Program
         using (StreamWriter sw = File.AppendText(rutaUsuarios))
         {
             sw.WriteLine($"{dni.Trim()}|{nombre.Trim()}");
+        }
+    }
+    // Metodo para registrar los cambios de estado de los pedidos
+    static void RegistrarCambioEstado(string codigo, string estadoAnterior, string estadoNuevo)
+    {
+        try
+        {
+            string fechaHora = DateTime.Now.ToString("dd/MM/aaaa HH:mm:ss");
+            using (StreamWriter sw = File.AppendText(rutaHistorial))
+            {
+                sw.WriteLine($"{codigo}|{estadoAnterior}|{estadoNuevo}|{fechaHora}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error al registrar el historial: " + ex.Message);
         }
     }
     static void ListarPorEstado()
@@ -441,12 +458,21 @@ public class Program
             Console.WriteLine("Opción no válida. No se realizaron cambios.");
             return;
         }
-
+        
+        // Verificar si el estado es diferente al actual
+        if (estados[indice] == nuevoEstado)
+        {
+            Console.WriteLine("El pedido ya tiene ese estado.");
+            return;
+        }
+        string estadoAnterior = estados[indice];
         estados[indice] = nuevoEstado;
+        RegistrarCambioEstado(codigos[indice],estadoAnterior,nuevoEstado);
         GuardarDatos();
         Console.WriteLine($"Estado actualizado con éxito a: {nuevoEstado}");
-    }
+        Console.WriteLine("Movimiento guardado en el historial.");
 
+    }
     static void CancelarPedido()
     {
         Console.WriteLine("--- CANCELAR UN PEDIDO ---");
