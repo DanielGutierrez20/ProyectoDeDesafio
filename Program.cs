@@ -76,7 +76,8 @@ public class Program
             Console.WriteLine("11. Listar respaldos");
             Console.WriteLine("12. Restaurar respaldo");
             Console.WriteLine("13. Salir");
-            Console.Write("Seleccione una opción (1-13): ");
+            Console.WriteLine("14. Consultar historial de cambios");
+            Console.Write("Seleccione una opción (1-14): ");
 
             string? opcion = Console.ReadLine();
             Console.WriteLine();
@@ -123,6 +124,9 @@ public class Program
                     GuardarDatos();//Guarda los pedidos registrados
                     Console.WriteLine("Datos guardados con éxito. Saliendo del programa...");
                     ejecutando = false;
+                    break;
+                case "14":
+                    ConsultarHistorial();
                     break;
                 default:
                     Console.WriteLine("Opción no válida. Intente nuevamente.");
@@ -296,6 +300,42 @@ public class Program
         catch (Exception ex)
         {
             Console.WriteLine("Error al registrar el historial: " + ex.Message);
+        }
+    }
+    // Método para consultar el historial de cambios de un pedido
+    static void ConsultarHistorial()
+    {
+        Console.WriteLine("\n--- HISTORIAL DE CAMBIOS ---");
+        Console.Write("Ingrese el código del pedido: ");
+        string codigoBuscado = Console.ReadLine()?.Trim() ?? "";
+        if (!File.Exists(rutaHistorial))
+        {
+            Console.WriteLine("No existe el archivo de historial.");
+            return;
+        }
+        string[] lineas = File.ReadAllLines(rutaHistorial);
+        bool encontrado = false;
+        Console.WriteLine("\n======================================");
+        Console.WriteLine("HISTORIAL DEL PEDIDO");
+        Console.WriteLine("======================================");
+        foreach (string linea in lineas)
+        {
+            if (string.IsNullOrWhiteSpace(linea))
+            continue;
+            string[] datos = linea.Split('|');
+            if (datos.Length == 4 &&string.Equals(datos[0], codigoBuscado,StringComparison.OrdinalIgnoreCase))
+            {
+                Console.WriteLine($"Código: {datos[0]}");
+                Console.WriteLine($"Estado anterior: {datos[1]}");
+                Console.WriteLine($"Estado nuevo: {datos[2]}");
+                Console.WriteLine($"Fecha y hora: {datos[3]}");
+                Console.WriteLine("--------------------------------------");
+                encontrado = true;
+            }
+        }
+        if (!encontrado)
+        {
+            Console.WriteLine("No se encontraron movimientos para ese pedido.");
         }
     }
     static void ListarPorEstado()
