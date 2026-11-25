@@ -75,8 +75,9 @@ public class Program
             Console.WriteLine("10. Crear respaldo");
             Console.WriteLine("11. Listar respaldos");
             Console.WriteLine("12. Restaurar respaldo");
-            Console.WriteLine("13. Salir");
-            Console.WriteLine("15. Cotizar envío");
+            Console.WriteLine("13. Consultar historial de cambios");
+            Console.WriteLine("14. Cotizar envío");
+             Console.WriteLine("15. Salir");
             Console.Write("Seleccione una opción (1-15): ");
 
             string? opcion = Console.ReadLine();
@@ -121,14 +122,15 @@ public class Program
                     RestaurarRespaldo();
                     break;    
                 case "13":
+                     ConsultarHistorial();
+                     break;
+                case "14":
+                    CotizadorEnvios.MostrarCotizador();//Conexion con el Modulo CotizadorEnvios.cs 
+                    break;
+                case "15":
                     GuardarDatos();//Guarda los pedidos registrados
                     Console.WriteLine("Datos guardados con éxito. Saliendo del programa...");
                     ejecutando = false;
-                    break;
-                case "14":
-                    Con1
-                case "15":
-                    CotizadorEnvios.MostrarCotizador();//Conexion con el Modulo CotizadorEnvios.cs 
                     break;
                 default:
                     Console.WriteLine("Opción no válida. Intente nuevamente.");
