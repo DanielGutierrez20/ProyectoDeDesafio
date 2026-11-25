@@ -53,6 +53,13 @@ public static class CotizadorEnvios
         { "Ventanilla", 22.00 }
     };
 
+//Precios de envio por tamaño de paquete
+    private const double AGENCIA_XXS = 8.00;
+    private const double AGENCIA_XS = 12.00;
+    private const double AGENCIA_S = 16.00;
+    private const double AGENCIA_M = 22.00;
+    private const double AGENCIA_L = 32.00;
+
 
     public static void MostrarCotizador()
     {
@@ -77,7 +84,7 @@ public static class CotizadorEnvios
                     CotizarMotorizado();
                     break;
                 case "2":
-                    Console.WriteLine("Agencia: pendiente de implementación.");
+                    CotizarAgencia();
                     break;
                 case "3":
                     enCotizador = false;
@@ -151,6 +158,65 @@ public static class CotizadorEnvios
         Console.WriteLine($"Distrito:        {distritoEncontrado}");
         Console.WriteLine($"Tarifa zona:     S/ {tarifaDistrito:F2}");
         Console.WriteLine($"Horario:         {nombreHorario} (+S/ {recargoHorario:F2})");
+        Console.WriteLine("-----------------------------");
+        Console.WriteLine($"TOTAL ESTIMADO:  S/ {total:F2}");
+    }
+
+//Funcion para elejir el tamaño del paquete y obtener un resumen del envio
+    private static void CotizarAgencia()
+    {
+        Console.WriteLine("--- COTIZACIÓN: AGENCIA ---");
+        Console.WriteLine("Seleccione la talla del paquete:");
+        Console.WriteLine($"1. XXS - S/ {AGENCIA_XXS:F2}");
+        Console.WriteLine($"2. XS  - S/ {AGENCIA_XS:F2}");
+        Console.WriteLine($"3. S   - S/ {AGENCIA_S:F2}");
+        Console.WriteLine($"4. M   - S/ {AGENCIA_M:F2}");
+        Console.WriteLine($"5. L   - S/ {AGENCIA_L:F2}");
+
+        string? tallaSeleccionada = null;
+        double total = 0;
+
+        while (tallaSeleccionada == null)
+        {
+            Console.Write("Talla (1-5 o escriba XXS/XS/S/M/L): ");
+            string entradaTalla = (Console.ReadLine() ?? "").Trim().ToUpper();
+
+            switch (entradaTalla)
+            {
+                case "1":
+                case "XXS":
+                    tallaSeleccionada = "XXS";
+                    total = AGENCIA_XXS;
+                    break;
+                case "2":
+                case "XS":
+                    tallaSeleccionada = "XS";
+                    total = AGENCIA_XS;
+                    break;
+                case "3":
+                case "S":
+                    tallaSeleccionada = "S";
+                    total = AGENCIA_S;
+                    break;
+                case "4":
+                case "M":
+                    tallaSeleccionada = "M";
+                    total = AGENCIA_M;
+                    break;
+                case "5":
+                case "L":
+                    tallaSeleccionada = "L";
+                    total = AGENCIA_L;
+                    break;
+                default:
+                    Console.WriteLine("Error: Talla no válida. Ingrese un número del 1 al 5 o XXS, XS, S, M, L.");
+                    break;
+            }
+        }
+
+        Console.WriteLine("\n--- RESUMEN DE COTIZACIÓN ---");
+        Console.WriteLine("Modalidad:       Agencia");
+        Console.WriteLine($"Talla paquete:   {tallaSeleccionada}");
         Console.WriteLine("-----------------------------");
         Console.WriteLine($"TOTAL ESTIMADO:  S/ {total:F2}");
     }
