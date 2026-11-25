@@ -3,6 +3,10 @@ using System.Collections.Generic;
 
 public static class CotizadorEnvios
 {
+    //Referencia de como el horario afecta el precios segun el horario
+    private const double RECARGO_MANANA = 5.00;
+    private const double RECARGO_MEDIODIA = 0.00;
+    private const double RECARGO_NOCHE = 2.00;
 
     // Tarifas por distrito de Lima y Callao : Josemaria Roque
     private static readonly Dictionary<string, double> tarifasDistritos = new Dictionary<string, double>
@@ -110,10 +114,44 @@ public static class CotizadorEnvios
             return;
         }
 
+    //Logica que permite que el usuario pueda escoger el horario y tener una cotizacion mas exacta
+        Console.WriteLine("\nSeleccione el horario de entrega:");
+        Console.WriteLine($"1. Mañana    (+S/ {RECARGO_MANANA:F2})");
+        Console.WriteLine("2. Mediodía  (Precio normal)");
+        Console.WriteLine($"3. Noche     (+S/ {RECARGO_NOCHE:F2})");
+        Console.Write("Horario (1-3): ");
+        string opcionHorario = (Console.ReadLine() ?? "").Trim();
+
+        string nombreHorario;
+        double recargoHorario;
+
+        switch (opcionHorario)
+        {
+            case "1":
+                nombreHorario = "Mañana";
+                recargoHorario = RECARGO_MANANA;
+                break;
+            case "2":
+                nombreHorario = "Mediodía";
+                recargoHorario = RECARGO_MEDIODIA;
+                break;
+            case "3":
+                nombreHorario = "Noche";
+                recargoHorario = RECARGO_NOCHE;
+                break;
+            default:
+                Console.WriteLine("Horario no válido.");
+                return;
+        }
+
+        double total = tarifaDistrito + recargoHorario;
+
         Console.WriteLine("\n--- RESUMEN DE COTIZACIÓN ---");
         Console.WriteLine("Modalidad:       Motorizado");
         Console.WriteLine($"Distrito:        {distritoEncontrado}");
+        Console.WriteLine($"Tarifa zona:     S/ {tarifaDistrito:F2}");
+        Console.WriteLine($"Horario:         {nombreHorario} (+S/ {recargoHorario:F2})");
         Console.WriteLine("-----------------------------");
-        Console.WriteLine($"TOTAL ESTIMADO:  S/ {tarifaDistrito:F2}");
+        Console.WriteLine($"TOTAL ESTIMADO:  S/ {total:F2}");
     }
 }
