@@ -1,4 +1,4 @@
-using System; 
+﻿using System; 
 using System.IO;            
 public class Program
 {
@@ -7,6 +7,7 @@ public class Program
     static string rutaArchivo = Path.Combine(carpetaDatos, "pedidos.txt");
     static string rutaUsuarios = Path.Combine(carpetaDatos, "usuarios.txt");
     static string carpetaRespaldos = Path.Combine(carpetaDatos, "respaldos");
+    static string rutaHistorial = Path.Combine(carpetaDatos, "historial.txt");
     static string[] codigos = new string[100];
     static string[] nombres = new string[100];
     static string[] celulares = new string[100];
@@ -42,6 +43,7 @@ public class Program
             if (!Directory.Exists(carpetaDatos)) Directory.CreateDirectory(carpetaDatos);
             if (!File.Exists(rutaUsuarios)) File.Create(rutaUsuarios).Close();
             if (!File.Exists(rutaArchivo)) File.Create(rutaArchivo).Close();
+            if (!File.Exists(rutaHistorial)) File.Create(rutaHistorial).Close();
         }
         catch (Exception ex)
         {
